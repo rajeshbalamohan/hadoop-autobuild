@@ -1,5 +1,7 @@
 HADOOP_VERSION=branch-2.3
 PROTOC_VERSION=2.5.0
+JDK_BASE_DIR=/usr/lib/jvm/jdk7
+JDK_VERSION=jdk1.7.0_51
 
 ARCH=$(shell uname -p)
 ifeq ($(ARCH), x86_64)
@@ -15,14 +17,11 @@ PDSH=pdsh -R ssh
 DFS=$(shell ls /grid/*/tmp/dfs/name/current/ 2>/dev/null | head -n 1)
 
 $(JDK_BIN):
-	--TODO:Fix me
-	cp /media/sf_Downloads/jdk-7u51-linux-x64.tar.gz .
-	JDK_BIN=jdk-7u51-linux-x64.tar.gz
+	#wget --no-check-certificate -O $(JDK_BIN) -c --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" $(JDK_URL) 
 
 jdk: $(JDK_BIN)
 	mkdir -p /usr/lib/jvm/
-	rm -rf /usr/lib/jvm/jdk7
-	test -d /usr/lib/jvm/jdk7 || tar -zxf $(JDK_BIN) && mv jdk1.7.0_51 /usr/lib/jvm/jdk7
+	test -d $(JDK_BASE_DIR) || tar -zxf $(JDK_BIN) && mv $(JDK_VERSION) $(JDK_BASE_DIR)
 	echo "export JAVA_HOME=/usr/lib/jvm/jdk7/"> /etc/profile.d/java.sh
 	mkdir -p /usr/lib/jvm-exports/jdk7
 
@@ -91,7 +90,7 @@ propogate: /opt/hadoop slaves /root/.ssh/id_rsa
 	for host in $$(cat slaves | grep -v localhost) ; do \
 		rsync -avP ~/.ssh/ ~/.ssh/; \
 		rsync --exclude=\*.out --exclude=\*.log -avP /opt/ $$host:/opt/; \
-		rsync -avP /usr/lib/jvm/jdk6/ $$host:/usr/lib/jvm/jdk6/; \
+		rsync -avP /usr/lib/jvm/jdk6/ $$host:$(JDK_BASE_DIR); \
 		scp /etc/profile.d/java.sh $$host:/etc/profile.d/java.sh; \
 	done
 
