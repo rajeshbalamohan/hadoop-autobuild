@@ -1,4 +1,4 @@
-VERSION=branch-2.3
+HADOOP_VERSION=branch-2.3
 PROTOC_VERSION=2.5.0
 
 ARCH=$(shell uname -p)
@@ -12,15 +12,18 @@ endif
 YUM=$(shell which yum)
 APT=$(shell which apt-get)
 PDSH=pdsh -R ssh
-DFS=$(shell ls /grid/*/tmp/dfs/name/current/ 2>/dev/null | head -n 1) 
+DFS=$(shell ls /grid/*/tmp/dfs/name/current/ 2>/dev/null | head -n 1)
 
-$(JDK_BIN): 
-	wget --no-check-certificate -O $(JDK_BIN) -c --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" $(JDK_URL) 
+$(JDK_BIN):
+	--TODO:Fix me
+	cp /media/sf_Downloads/jdk-7u51-linux-x64.tar.gz .
+	JDK_BIN=jdk-7u51-linux-x64.tar.gz
 
 jdk: $(JDK_BIN)
 	mkdir -p /usr/lib/jvm/
-	test -d /usr/lib/jvm/jdk7 || (yes | bash -x tar -zxf JDK_BIN && mv jdk1.7.0_51 /usr/lib/jvm/jdk7)
-	echo "export JAVA_HOME=/usr/lib/jvm/jdk7/"> /etc/profile.d/java.sh 
+	rm -rf /usr/lib/jvm/jdk7
+	test -d /usr/lib/jvm/jdk7 || tar -zxf $(JDK_BIN) && mv jdk1.7.0_51 /usr/lib/jvm/jdk7
+	echo "export JAVA_HOME=/usr/lib/jvm/jdk7/"> /etc/profile.d/java.sh
 	mkdir -p /usr/lib/jvm-exports/jdk7
 
 epel:
@@ -31,11 +34,11 @@ endif
 
 git: epel
 ifneq ($(YUM),)
-	yum -y install git-core 
-	yum -y install gcc gcc-c++ 
+	yum -y install git-core
+	yum -y install gcc gcc-c++
 	yum -y install pdsh
 	yum -y install cmake
-	yum -y install zlib-devel openssl-devel 
+	yum -y install zlib-devel openssl-devel
 endif
 ifneq ($(APT),)
 	apt-get install -y git gcc g++ python man cmake zlib1g-dev libssl-dev pdsh
@@ -47,12 +50,12 @@ maven: jdk
 	tar -C /opt/hadoop-build/ --strip-components=1 -xzvf apache-maven-3.0.5-bin.tar.gz
 
 ant: jdk
-	wget -c http://psg.mtu.edu/pub/apache//ant/binaries/apache-ant-1.9.0-bin.tar.gz 
+	wget -c http://psg.mtu.edu/pub/apache//ant/binaries/apache-ant-1.9.0-bin.tar.gz
 	-- mkdir /opt/ant/
 	tar -C /opt/ant/ --strip-components=1 -xzvf apache-ant-1.9.0-bin.tar.gz
 	-- yum -y remove ant
 
-protobuf: git 
+protobuf: git
 	wget -c http://protobuf.googlecode.com/files/protobuf-$(PROTOC_VERSION).tar.bz2
 	tar -xvf protobuf-$(PROTOC_VERSION).tar.bz2
 	test -f /opt/hadoop-build/bin/protoc || \
@@ -62,16 +65,13 @@ protobuf: git
 	make install)
 
 hadoop: git maven protobuf
-	test -d hadoop || git clone git://git.apache.org/hadoop-common.git hadoop 
-	-- cd hadoop; git pull --rebase
+	test -d hadoop || git clone -b $(HADOOP_VERSION) git://git.apache.org/hadoop-common.git hadoop
 	export PATH=$$PATH:/opt/hadoop-build/bin/; \
-	cd hadoop/; git branch $(VERSION) --track origin/$(VERSION); \
-	git checkout $(VERSION); \
 	. /etc/profile; \
-	mvn package -Pnative -Pdist -DskipTests;
+	cd hadoop; mvn package -Pnative -Pdist -DskipTests;
 
 
-hadoop/hadoop-dist/target/: 
+hadoop/hadoop-dist/target/:
 	make hadoop
 
 install: hadoop/hadoop-dist/target/
@@ -81,7 +81,7 @@ install: hadoop/hadoop-dist/target/
 
 /opt/hadoop: install
 
-/root/.ssh/id_rsa: 
+/root/.ssh/id_rsa:
 	ssh-keygen -f /root/.ssh/id_rsa -N ''
 	echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
@@ -107,7 +107,7 @@ stop:
 	/opt/hadoop/sbin/yarn-daemon.sh stop resourcemanager
 	/opt/hadoop/sbin/mr-jobhistory-daemon.sh stop historyserver
 	$(PDSH) -w $$(tr \\n , < slaves) 'source /etc/profile; /opt/hadoop/sbin/hadoop-daemon.sh stop datanode && /opt/hadoop/sbin/yarn-daemon.sh stop nodemanager'
-	
+
 
 rm-restart:
 	/opt/hadoop/sbin/yarn-daemon.sh stop resourcemanager
