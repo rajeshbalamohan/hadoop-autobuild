@@ -12,8 +12,12 @@ def distribute(path):
 	return ",".join(["%s/%s" % (v,path) for v in volumes])
 
 core = """
-<configuration>
-  <property>
+ <configuration>
+    <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://%(namenode)s:8020</value>
+  </property>
+    <property>
     <name>hadoop.proxyuser.hcat.groups</name>
     <value>*</value>
   </property>
@@ -100,38 +104,15 @@ core = """
     <value>*</value>
   </property>
 
-<property>
-  <name>mapreduce.clientfactory.class.name</name>
-  <value>org.apache.hadoop.mapred.YarnClientFactory</value>
-</property>
-
- <property>
-    <name>yarn.server.principal</name>
-    <value>nm/localhost@LOCALHOST</value>
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>%(hadoop_tmp)s</value>
+    <description>A base for other temporary directories.</description>
   </property>
-
-<property>
-  <name>fs.default.name</name>
-  <value>hdfs://%(namenode)s:50070</value>
-  <!--
-  <value>file:///</value>
-  -->
-  <description>The name of the default file system.  A URI whose
-  scheme and authority determine the FileSystem implementation.  The
-  uri's scheme determines the config property (fs.SCHEME.impl) naming
-  the FileSystem implementation class.  The uri's authority is used to
-  determine the host, port, etc. for a filesystem.</description>
-</property>
-
-<property>
-  <name>hadoop.tmp.dir</name>
-  <value>%(hadoop_tmp)s</value>
-  <description>A base for other temporary directories.</description>
-</property>
-<property>
-	<name>dfs.namenode.name.dir</name>
-	<value>%(hadoop_name)s</value>
-</property>
+  <property>
+  	<name>dfs.namenode.name.dir</name>
+  	<value>%(hadoop_name)s</value>
+  </property>
 
   <property>
     <name>hadoop.security.authentication</name>
@@ -215,23 +196,9 @@ DEFAULT
 </configuration>
 """ % {'namenode':namenode, 'hadoop_name':distribute('dfs/name'), 'hadoop_tmp':distribute('tmp')}
 
-hdfs = """<?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
-
-<!-- Put site-specific property overrides in this file. -->
-
+hdfs = """
 <configuration>
-  
-  <property>
-    <name>hdfs.defaultFS</name>
-    <value>hdfs://$(namenode)s</value>
-  </property>
-  <property>
-    <name>hdfs.default.name</name>
-    <value>hdfs://$(namenode)s</value>
-  </property>
-
-  <property>
+    <property>
     <name>dfs.namenode.safemode.threshold-pct</name>
     <value>1.0f</value>
   </property>
@@ -253,7 +220,7 @@ hdfs = """<?xml version="1.0"?>
   </property>
     <property>
     <name>dfs.cluster.administrators</name>
-    <value> hdfs</value>
+    <value>hdfs</value>
   </property>
     <property>
     <name>dfs.blockreport.initialDelay</name>
@@ -291,6 +258,167 @@ hdfs = """<?xml version="1.0"?>
     <name>fs.permissions.umask-mode</name>
     <value>022</value>
   </property>
+    <property>
+    <name>dfs.datanode.address</name>
+    <value>0.0.0.0:50010</value>
+  </property>
+    <property>
+    <name>dfs.namenode.checkpoint.period</name>
+    <value>21600</value>
+  </property>
+    <property>
+    <name>dfs.block.access.token.enable</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.hosts.exclude</name>
+    <value>/etc/hadoop/conf/dfs.exclude</value>
+  </property>
+    <property>
+    <name>dfs.namenode.checkpoint.dir</name>
+    <value>/hadoop/hdfs/namesecondary</value>
+  </property>
+    <property>
+    <name>dfs.namenode.checkpoint.edits.dir</name>
+    <value>${dfs.namenode.checkpoint.dir}</value>
+  </property>
+    <property>
+    <name>dfs.blocksize</name>
+    <value>134217728</value>
+  </property>
+    <property>
+    <name>dfs.namenode.http-address</name>
+    <value>%(namenode)s:50070</value>
+  </property>
+    <property>
+    <name>dfs.namenode.secondary.http-address</name>
+    <value>%(namenode)s:50090</value>
+  </property>
+    <property>
+    <name>dfs.client.read.shortcircuit.streams.cache.size</name>
+    <value>4096</value>
+  </property>
+    <property>
+    <name>dfs.datanode.http.address</name>
+    <value>0.0.0.0:50075</value>
+  </property>
+    <property>
+    <name>dfs.namenode.write.stale.datanode.ratio</name>
+    <value>1.0f</value>
+  </property>
+    <property>
+    <name>dfs.support.append</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.datanode.ipc.address</name>
+    <value>0.0.0.0:8010</value>
+  </property>
+    <property>
+    <name>dfs.datanode.balance.bandwidthPerSec</name>
+    <value>6250000</value>
+  </property>
+    <property>
+    <name>dfs.heartbeat.interval</name>
+    <value>3</value>
+  </property>
+    <property>
+    <name>dfs.datanode.failed.volumes.tolerated</name>
+    <value>0</value>
+  </property>
+    <property>
+    <name>dfs.permissions.superusergroup</name>
+    <value>hdfs</value>
+  </property>
+    <property>
+    <name>dfs.domain.socket.path</name>
+    <value>/var/lib/hadoop-hdfs/dn_socket</value>
+  </property>
+    <property>
+    <name>dfs.namenode.avoid.read.stale.datanode</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.journalnode.edits.dir</name>
+    <value>/grid/0/hdfs/journal</value>
+  </property>
+    <property>
+    <name>dfs.client.read.shortcircuit</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.client.block.write.replace-datanode-on-failure.policy</name>
+    <value>NEVER</value>
+  </property>
+    <property>
+    <name>dfs.webhdfs.enabled</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.datanode.data.dir.perm</name>
+    <value>750</value>
+  </property>
+    <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>/hadoop/hdfs/data</value>
+  </property>
+    <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>/hadoop/hdfs/namenode</value>
+  </property>
+    <property>
+    <name>dfs.namenode.https-address</name>
+    <value>%(namenode)s:50470</value>
+  </property>
+  <property>
+    <name>hdfs.defaultFS</name>
+    <value>hdfs://$(namenode)s</value>
+  </property>
+  <property>
+    <name>hdfs.default.name</name>
+    <value>hdfs://$(namenode)s</value>
+  </property>
+  <property>
+    <name>dfs.namenode.safemode.threshold-pct</name>
+    <value>1.0f</value>
+  </property>
+    <property>
+    <name>dfs.datanode.du.reserved</name>
+    <value>1073741824</value>
+  </property>
+    <property>
+    <name>dfs.datanode.max.transfer.threads</name>
+    <value>1024</value>
+  </property>
+<property>
+    <name>dfs.namenode.name.dir</name>
+    <value>/hadoop/hdfs/namenode</value>
+  </property>
+    <property>
+    <name>dfs.namenode.https-address</name>
+    <value>%(namenode)s:50470</value>
+  </property>
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>%(hadoop_data)s</value>
+  </property>
+
+<property>
+  <name>dfs.block.local-path-access.user</name>
+  <value>root</value>
+</property>
+
+<property>
+  <name>hadoop.tmp.dir</name>
+  <value>%(hadoop_tmp)s</value>
+  <description>A base for other temporary directories.</description>
+</property>
+
+
+    <property>
+    <name>fs.permissions.umask-mode</name>
+    <value>022</value>
+  </property>
     
     <property>
     <name>dfs.namenode.checkpoint.period</name>
@@ -315,7 +443,7 @@ hdfs = """<?xml version="1.0"?>
     
     <property>
     <name>dfs.namenode.secondary.http-address</name>
-    <value>sandbox.hortonworks.com:50090</value>
+    <value>%(namenode)s:50090</value>
   </property>
     <property>
     <name>dfs.client.read.shortcircuit.streams.cache.size</name>
@@ -378,16 +506,18 @@ hdfs = """<?xml version="1.0"?>
     <value>750</value>
   </property>
    
-    <property>
+  <property>
     <name>dfs.namenode.name.dir</name>
     <value>/hadoop/hdfs/namenode</value>
   </property>
     <property>
     <name>dfs.namenode.https-address</name>
-    <value>sandbox.hortonworks.com:50470</value>
+    <value>%(namenode)s:50470</value>
   </property>
-
-
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>%(hadoop_data)s</value>
+  </property>
 
 <property>
   <name>dfs.block.local-path-access.user</name>
@@ -455,7 +585,7 @@ hdfs = """<?xml version="1.0"?>
 
 yarn = """<?xml version="1.0"?>
 <configuration>
-  <property>
+   <property>
     <name>yarn.nodemanager.remote-app-log-dir</name>
     <value>/app-logs</value>
   </property>
@@ -483,8 +613,14 @@ yarn = """<?xml version="1.0"?>
     <name>yarn.nodemanager.linux-container-executor.group</name>
     <value>hadoop</value>
   </property>
-    
-
+    <property>
+    <name>yarn.resourcemanager.resource-tracker.address</name>
+    <value>%(resourcemanager)s:8025</value>
+  </property>
+    <property>
+    <name>yarn.resourcemanager.admin.address</name>
+    <value>%(resourcemanager)s:8141</value>
+  </property>
     <property>
     <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
     <value>org.apache.hadoop.mapred.ShuffleHandler</value>
@@ -497,7 +633,10 @@ yarn = """<?xml version="1.0"?>
     <name>yarn.resourcemanager.am.max-attempts</name>
     <value>2</value>
   </property>
-  
+    <property>
+    <name>yarn.nodemanager.address</name>
+    <value>0.0.0.0:45454</value>
+  </property>
     <property>
     <name>yarn.nodemanager.delete.debug-delay-sec</name>
     <value>0</value>
@@ -508,7 +647,103 @@ yarn = """<?xml version="1.0"?>
   </property>
     <property>
     <name>yarn.resourcemanager.hostname</name>
-    <value>sandbox.hortonworks.com</value>
+    <value>%(resourcemanager)s</value>
+  </property>
+    <property>
+    <name>yarn.acl.enable</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>yarn.resourcemanager.scheduler.address</name>
+    <value>%(resourcemanager)s:8030</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.remote-app-log-dir-suffix</name>
+    <value>logs</value>
+  </property>
+    <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>64</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.log-dirs</name>
+    <value>/hadoop/yarn/log</value>
+  </property>
+    <property>
+    <name>yarn.log-aggregation.retain-seconds</name>
+    <value>2592000</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.log.retain-second</name>
+    <value>604800</value>
+  </property>
+    <property>
+    <name>yarn.log.server.url</name>
+    <value>http://%(resourcemanager)s:19888/jobhistory/logs</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.disk-health-checker.min-healthy-disks</name>
+    <value>0.25</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.health-checker.script.timeout-ms</name>
+    <value>60000</value>
+  </property>
+    <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>2048</value>
+  </property>
+    <property>
+    <name>yarn.resourcemanager.webapp.address</name>
+    <value>%(resourcemanager)s:8088</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>2250</value>
+  </property>
+    <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.container-monitor.interval-ms</name>
+    <value>3000</value>
+  </property>
+    <property>
+    <name>yarn.resourcemanager.address</name>
+    <value>%(resourcemanager)s:8050</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.log-aggregation.compression-type</name>
+    <value>gz</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.vmem-pmem-ratio</name>
+    <value>10</value>
+  </property>
+    <property>
+    <name>yarn.admin.acl</name>
+    <value>*</value>
+  </property>
+
+
+
+
+    <property>
+    <name>yarn.nodemanager.delete.debug-delay-sec</name>
+    <value>0</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+  </property>
+    <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>%(resourcemanager)s</value>
   </property>
     <property>
     <name>yarn.acl.enable</name>
@@ -626,19 +861,6 @@ yarn = """<?xml version="1.0"?>
     <value>%(resourcemanager)s:8030</value>
   </property>
 
-  <property>
-    <name>yarn.resourcemanager.nodes.exclude-path</name>
-    <value>/opt/hadoop/etc/hadoop/excluded-nodes</value>
-  </property>
-
-
-<!--
-  <property>
-     <name>yarn.resourcemanager.webapp.address</name>
-     <value>localhost:8088</value>
-  </property>
--->
-
 <!--
   <property>
     <name>yarn.resourcemanager.scheduler.class</name>
@@ -666,14 +888,6 @@ yarn = """<?xml version="1.0"?>
   <property>
     <name>yarn.nodemanager.log-dirs</name>
     <value>%(hadoop_nm_log)s</value>
-  </property>
-
-  <property>
-    <name>yarn.server.nodemanager.remote-app-log-dir</name>
-   <!--
-   <value>/tmp/test-logs</value>
-   -->
-   <value>/app-logs</value>
   </property>
 
   <property>
@@ -844,7 +1058,7 @@ mapred = """<?xml version="1.0"?>
   </property>
     <property>
     <name>mapreduce.jobhistory.webapp.address</name>
-    <value>sandbox.hortonworks.com:19888</value>
+    <value>%(resourcemanager)s:19888</value>
   </property>
     <property>
     <name>mapreduce.reduce.input.buffer.percent</name>
@@ -873,10 +1087,6 @@ mapred = """<?xml version="1.0"?>
     <property>
     <name>mapreduce.output.fileoutputformat.compress.type</name>
     <value>BLOCK</value>
-  </property>
-    <property>
-    <name>mapreduce.jobhistory.address</name>
-    <value>sandbox.hortonworks.com:10020</value>
   </property>
     <property>
     <name>mapreduce.reduce.log.level</name>
