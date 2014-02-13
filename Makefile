@@ -90,7 +90,7 @@ propogate: /opt/hadoop slaves /root/.ssh/id_rsa
 	cp slaves /opt/hadoop/etc/hadoop/;
 	ssh-copy-id localhost;
 	for host in $$(cat slaves | grep -v localhost) ; do \
-		rsync -avP 'ssh -p $(SSH_PORT)' ~/.ssh/ ~/.ssh/; \
+		rsync -avP ~/.ssh/ ~/.ssh/; \
 		rsync 'ssh -p $(SSH_PORT)' --exclude=\*.out --exclude=\*.log -avP /opt/ $$host:/opt/; \
 		rsync -avP 'ssh -p $(SSH_PORT)' $(JDK_BASE_DIR) $$host:$(JDK_BASE_DIR); \
 		scp -P $(SSH_PORT) /etc/profile.d/java.sh $$host:/etc/profile.d/java.sh; \
