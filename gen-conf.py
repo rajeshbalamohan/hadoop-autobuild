@@ -271,10 +271,6 @@ hdfs = """
     <value>true</value>
   </property>
     <property>
-    <name>dfs.hosts.exclude</name>
-    <value>/etc/hadoop/conf/dfs.exclude</value>
-  </property>
-    <property>
     <name>dfs.namenode.checkpoint.dir</name>
     <value>/hadoop/hdfs/namesecondary</value>
   </property>
@@ -332,7 +328,7 @@ hdfs = """
   </property>
     <property>
     <name>dfs.domain.socket.path</name>
-    <value>/var/lib/hadoop-hdfs/dn_socket</value>
+    <value>/var/run/hdfs.sock</value>
   </property>
     <property>
     <name>dfs.namenode.avoid.read.stale.datanode</name>
@@ -1342,7 +1338,7 @@ mapred = """<?xml version="1.0"?>
 </property>
 
 </configuration>
-""" % ({'jhs':hostname})
+""" % ({'resourcemanager' : resourcemanager,'jhs':hostname})
 
 open("core-site.xml", "w").write(core)
 open("hdfs-site.xml", "w").write(hdfs)
