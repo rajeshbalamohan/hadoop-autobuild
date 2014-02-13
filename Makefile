@@ -8,7 +8,7 @@ YUM=$(shell which yum)
 APT=$(shell which apt-get)
 DFS=$(shell ls /grid/*/tmp/dfs/name/current/ 2>/dev/null | head -n 1)
 ARCH=$(shell uname -p)
-PDSH=pdsh -R ssh -p$(SSH_PORT)
+PDSH=pdsh -R ssh
 
 ifeq ($(ARCH), x86_64)
 	JDK_URL=http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz
@@ -76,7 +76,7 @@ hadoop/hadoop-dist/target/:
 	make hadoop
 
 install: hadoop/hadoop-dist/target/
-	rsync -avP 'ssh -p $(SSH_PORT)' hadoop/hadoop-dist/target/hadoop-2*/ /opt/hadoop/
+	rsync -avP hadoop/hadoop-dist/target/hadoop-2*/ /opt/hadoop/
 	cp slaves gen-conf.py /opt/hadoop/etc/hadoop/
 	cd /opt/hadoop/etc/hadoop/; python gen-conf.py
 
@@ -88,7 +88,7 @@ install: hadoop/hadoop-dist/target/
 
 propogate: /opt/hadoop slaves /root/.ssh/id_rsa
 	cp slaves /opt/hadoop/etc/hadoop/;
-	ssh-copy-id localhost;
+	ssh-copy-id "user@localhost -p $(SSH_PORT)";
 	for host in $$(cat slaves | grep -v localhost) ; do \
 		rsync -avP ~/.ssh/ ~/.ssh/; \
 		rsync 'ssh -p $(SSH_PORT)' --exclude=\*.out --exclude=\*.log -avP /opt/ $$host:/opt/; \
@@ -101,13 +101,13 @@ start: propogate
 	/opt/hadoop/sbin/hadoop-daemon.sh start namenode
 	/opt/hadoop/sbin/yarn-daemon.sh start resourcemanager
 	/opt/hadoop/sbin/mr-jobhistory-daemon.sh start historyserver
-	$(PDSH) -w $$(tr \\n , < slaves) 'source /etc/profile; /opt/hadoop/sbin/hadoop-daemon.sh start datanode && /opt/hadoop/sbin/yarn-daemon.sh start nodemanager'
+	PDSH_SSH_ARGS_APPEND="-p$(SSH_PORT)" $(PDSH) -w $$(tr \\n , < slaves) 'source /etc/profile; /opt/hadoop/sbin/hadoop-daemon.sh start datanode && /opt/hadoop/sbin/yarn-daemon.sh start nodemanager'
 
 stop:
 	/opt/hadoop/sbin/hadoop-daemon.sh stop namenode
 	/opt/hadoop/sbin/yarn-daemon.sh stop resourcemanager
 	/opt/hadoop/sbin/mr-jobhistory-daemon.sh stop historyserver
-	$(PDSH) -w $$(tr \\n , < slaves) 'source /etc/profile; /opt/hadoop/sbin/hadoop-daemon.sh stop datanode && /opt/hadoop/sbin/yarn-daemon.sh stop nodemanager'
+	PDSH_SSH_ARGS_APPEND="-p$(SSH_PORT)" $(PDSH) -w $$(tr \\n , < slaves) 'source /etc/profile; /opt/hadoop/sbin/hadoop-daemon.sh stop datanode && /opt/hadoop/sbin/yarn-daemon.sh stop nodemanager'
 
 
 rm-restart:

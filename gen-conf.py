@@ -13,9 +13,7 @@ def distribute(path):
 
 core = """
 <configuration>
-
-</property>
-    <property>
+  <property>
     <name>hadoop.proxyuser.hcat.groups</name>
     <value>*</value>
   </property>
@@ -223,8 +221,17 @@ hdfs = """<?xml version="1.0"?>
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
+  
+  <property>
+    <name>hdfs.defaultFS</name>
+    <value>hdfs://$(namenode)s</value>
+  </property>
+  <property>
+    <name>hdfs.default.name</name>
+    <value>hdfs://$(namenode)s</value>
+  </property>
 
-<property>
+  <property>
     <name>dfs.namenode.safemode.threshold-pct</name>
     <value>1.0f</value>
   </property>
@@ -294,10 +301,6 @@ hdfs = """<?xml version="1.0"?>
     <value>true</value>
   </property>
     <property>
-    <name>dfs.hosts.exclude</name>
-    <value>/etc/hadoop/conf/dfs.exclude</value>
-  </property>
-    <property>
     <name>dfs.namenode.checkpoint.dir</name>
     <value>/hadoop/hdfs/namesecondary</value>
   </property>
@@ -309,10 +312,7 @@ hdfs = """<?xml version="1.0"?>
     <name>dfs.blocksize</name>
     <value>134217728</value>
   </property>
-    <property>
-    <name>dfs.namenode.http-address</name>
-    <value>sandbox.hortonworks.com:50070</value>
-  </property>
+    
     <property>
     <name>dfs.namenode.secondary.http-address</name>
     <value>sandbox.hortonworks.com:50090</value>
@@ -401,7 +401,7 @@ hdfs = """<?xml version="1.0"?>
 </property>
 
 <property>
-  <name>dfs.http.address</name>
+  <name>dfs.namenode.http.address</name>
   <value>%(namenode)s:50070</value>
   <description>
     The address and the base port where the dfs namenode web ui will listen on.
@@ -455,7 +455,6 @@ hdfs = """<?xml version="1.0"?>
 
 yarn = """<?xml version="1.0"?>
 <configuration>
-
   <property>
     <name>yarn.nodemanager.remote-app-log-dir</name>
     <value>/app-logs</value>
@@ -802,8 +801,7 @@ yarn = """<?xml version="1.0"?>
 
 mapred = """<?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
-
-
+<configuration>
   <property>
     <name>yarn.app.mapreduce.am.resource.mb</name>
     <value>250</value>
@@ -958,8 +956,6 @@ mapred = """<?xml version="1.0"?>
   </property>
 
 <!-- Put site-specific property overrides in this file. -->
-
-<configuration>
 
 <property>
   <name>mapreduce.jobhistory.address</name>
