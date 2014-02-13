@@ -17,11 +17,11 @@ PDSH=pdsh -R ssh
 DFS=$(shell ls /grid/*/tmp/dfs/name/current/ 2>/dev/null | head -n 1)
 
 $(JDK_BIN):
-	#wget --no-check-certificate -O $(JDK_BIN) -c --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" $(JDK_URL) 
+	wget --no-check-certificate -O $(JDK_BIN) -c --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" $(JDK_URL) 
 
 jdk: $(JDK_BIN)
 	mkdir -p /usr/lib/jvm/
-	test -d $(JDK_BASE_DIR) || tar -zxf $(JDK_BIN) && mv $(JDK_VERSION) $(JDK_BASE_DIR)
+	test -d $(JDK_BASE_DIR) || (tar -zxf $(JDK_BIN) && mv $(JDK_VERSION) $(JDK_BASE_DIR))
 	echo "export JAVA_HOME=/usr/lib/jvm/jdk7/"> /etc/profile.d/java.sh
 	mkdir -p /usr/lib/jvm-exports/jdk7
 
@@ -65,7 +65,7 @@ protobuf: git
 
 hadoop: git maven protobuf
 	test -d hadoop || git clone -b $(HADOOP_VERSION) git://git.apache.org/hadoop-common.git hadoop
-	export PATH=$$PATH:/opt/hadoop-build/bin/; \
+	export PATH=/opt/hadoop-build/bin/:$$PATH; \
 	. /etc/profile; \
 	cd hadoop; mvn package -Pnative -Pdist -DskipTests;
 

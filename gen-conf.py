@@ -14,6 +14,94 @@ def distribute(path):
 core = """
 <configuration>
 
+</property>
+    <property>
+    <name>hadoop.proxyuser.hcat.groups</name>
+    <value>*</value>
+  </property>
+    <property>
+    <name>hadoop.proxyuser.hive.groups</name>
+    <value>*</value>
+  </property>
+    <property>
+    <name>fs.trash.interval</name>
+    <value>360</value>
+  </property>
+    <property>
+    <name>mapreduce.jobtracker.webinterface.trusted</name>
+    <value>false</value>
+  </property>
+    <property>
+    <name>io.serializations</name>
+    <value>org.apache.hadoop.io.serializer.WritableSerialization</value>
+  </property>
+    <property>
+    <name>fs.checkpoint.size</name>
+    <value>0.5</value>
+  </property>
+    <property>
+    <name>hadoop.security.auth_to_local</name>
+    <value>
+        RULE:[2:$1@$0]([rn]m@.*)s/.*/yarn/
+        RULE:[2:$1@$0](jhs@.*)s/.*/mapred/
+        RULE:[2:$1@$0]([nd]n@.*)s/.*/hdfs/
+        RULE:[2:$1@$0](hm@.*)s/.*/hbase/
+        RULE:[2:$1@$0](rs@.*)s/.*/hbase/
+        DEFAULT</value>
+  </property>
+    <property>
+    <name>hadoop.security.authorization</name>
+    <value>false</value>
+  </property>
+    <property>
+    <name>hadoop.proxyuser.hue.groups</name>
+    <value>*</value>
+  </property>
+    <property>
+    <name>hadoop.proxyuser.hue.hosts</name>
+    <value>*</value>
+  </property>
+    <property>
+    <name>ipc.client.connection.maxidletime</name>
+    <value>30000</value>
+  </property>
+    <property>
+    <name>io.file.buffer.size</name>
+    <value>131072</value>
+  </property>
+    <property>
+    <name>hadoop.proxyuser.oozie.hosts</name>
+    <value>*</value>
+  </property>
+    <property>
+    <name>io.compression.codecs</name>
+    <value>org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec</value>
+  </property>
+    <property>
+    <name>ipc.client.idlethreshold</name>
+    <value>8000</value>
+  </property>
+    <property>
+    <name>hadoop.proxyuser.hive.hosts</name>
+    <value>*</value>
+  </property>
+    <property>
+    <name>hadoop.security.authentication</name>
+    <value>simple</value>
+  </property>
+    <property>
+    <name>hadoop.proxyuser.oozie.groups</name>
+    <value>*</value>
+  </property>
+    <property>
+    <name>ipc.client.connect.max.retries</name>
+    <value>50</value>
+  </property>
+    <property>
+    <name>hadoop.proxyuser.hcat.hosts</name>
+    <value>*</value>
+  </property>
+
 <property>
   <name>mapreduce.clientfactory.class.name</name>
   <value>org.apache.hadoop.mapred.YarnClientFactory</value>
@@ -26,7 +114,7 @@ core = """
 
 <property>
   <name>fs.default.name</name>
-  <value>hdfs://%(namenode)s:56565</value>
+  <value>hdfs://%(namenode)s:50070</value>
   <!--
   <value>file:///</value>
   -->
@@ -137,9 +225,169 @@ hdfs = """<?xml version="1.0"?>
 <configuration>
 
 <property>
-  <name>dfs.client.read.shortcircuit</name>
-  <value>true</value>
-</property>
+    <name>dfs.namenode.safemode.threshold-pct</name>
+    <value>1.0f</value>
+  </property>
+    <property>
+    <name>dfs.datanode.du.reserved</name>
+    <value>1073741824</value>
+  </property>
+    <property>
+    <name>dfs.datanode.max.transfer.threads</name>
+    <value>1024</value>
+  </property>
+    <property>
+    <name>dfs.namenode.stale.datanode.interval</name>
+    <value>30000</value>
+  </property>
+    <property>
+    <name>dfs.https.port</name>
+    <value>50470</value>
+  </property>
+    <property>
+    <name>dfs.cluster.administrators</name>
+    <value> hdfs</value>
+  </property>
+    <property>
+    <name>dfs.blockreport.initialDelay</name>
+    <value>120</value>
+  </property>
+    <property>
+    <name>dfs.journalnode.http-address</name>
+    <value>0.0.0.0:8480</value>
+  </property>
+    <property>
+    <name>dfs.namenode.accesstime.precision</name>
+    <value>0</value>
+  </property>
+    <property>
+    <name>dfs.namenode.handler.count</name>
+    <value>5</value>
+  </property>
+    <property>
+    <name>dfs.replication</name>
+    <value>3</value>
+  </property>
+    <property>
+    <name>dfs.namenode.avoid.write.stale.datanode</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.permissions.enabled</name>
+    <value>false</value>
+  </property>
+    <property>
+    <name>dfs.replication.max</name>
+    <value>50</value>
+  </property>
+    <property>
+    <name>fs.permissions.umask-mode</name>
+    <value>022</value>
+  </property>
+    
+    <property>
+    <name>dfs.namenode.checkpoint.period</name>
+    <value>21600</value>
+  </property>
+    <property>
+    <name>dfs.block.access.token.enable</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.hosts.exclude</name>
+    <value>/etc/hadoop/conf/dfs.exclude</value>
+  </property>
+    <property>
+    <name>dfs.namenode.checkpoint.dir</name>
+    <value>/hadoop/hdfs/namesecondary</value>
+  </property>
+    <property>
+    <name>dfs.namenode.checkpoint.edits.dir</name>
+    <value>${dfs.namenode.checkpoint.dir}</value>
+  </property>
+    <property>
+    <name>dfs.blocksize</name>
+    <value>134217728</value>
+  </property>
+    <property>
+    <name>dfs.namenode.http-address</name>
+    <value>sandbox.hortonworks.com:50070</value>
+  </property>
+    <property>
+    <name>dfs.namenode.secondary.http-address</name>
+    <value>sandbox.hortonworks.com:50090</value>
+  </property>
+    <property>
+    <name>dfs.client.read.shortcircuit.streams.cache.size</name>
+    <value>4096</value>
+  </property>
+  <property>
+    <name>dfs.namenode.write.stale.datanode.ratio</name>
+    <value>1.0f</value>
+  </property>
+    <property>
+    <name>dfs.support.append</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.datanode.ipc.address</name>
+    <value>0.0.0.0:8010</value>
+  </property>
+    <property>
+    <name>dfs.datanode.balance.bandwidthPerSec</name>
+    <value>6250000</value>
+  </property>
+    <property>
+    <name>dfs.heartbeat.interval</name>
+    <value>3</value>
+  </property>
+    <property>
+    <name>dfs.datanode.failed.volumes.tolerated</name>
+    <value>0</value>
+  </property>
+    <property>
+    <name>dfs.permissions.superusergroup</name>
+    <value>hdfs</value>
+  </property>
+    <property>
+    <name>dfs.domain.socket.path</name>
+    <value>/var/lib/hadoop-hdfs/dn_socket</value>
+  </property>
+    <property>
+    <name>dfs.namenode.avoid.read.stale.datanode</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.journalnode.edits.dir</name>
+    <value>/grid/0/hdfs/journal</value>
+  </property>
+    <property>
+    <name>dfs.client.read.shortcircuit</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.client.block.write.replace-datanode-on-failure.policy</name>
+    <value>NEVER</value>
+  </property>
+    <property>
+    <name>dfs.webhdfs.enabled</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>dfs.datanode.data.dir.perm</name>
+    <value>750</value>
+  </property>
+   
+    <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>/hadoop/hdfs/namenode</value>
+  </property>
+    <property>
+    <name>dfs.namenode.https-address</name>
+    <value>sandbox.hortonworks.com:50470</value>
+  </property>
+
+
 
 <property>
   <name>dfs.block.local-path-access.user</name>
@@ -202,29 +450,135 @@ hdfs = """<?xml version="1.0"?>
   </description>
 </property>
 
-<property>
-  <name>dfs.block.access.token.enable</name>
-  <value>false</value>
-  <final>true</final>
-</property>
-
-<property>
-  <name>dfs.domain.socket.path</name>
-	<value>/var/run/hdfs.sock</value>
-</property>
-
-
 </configuration>
 """ % {'namenode' : namenode, 'hadoop_tmp' : distribute('tmp'), 'hadoop_data' : distribute('dfs/data')}
 
 yarn = """<?xml version="1.0"?>
 <configuration>
 
- <property>
-    <name>yarn.resourcemanager.principal</name>
-    <value>rm/localhost@localhost.eglbp.corp.yahoo.com</value>
+  <property>
+    <name>yarn.nodemanager.remote-app-log-dir</name>
+    <value>/app-logs</value>
   </property>
+    <property>
+    <name>yarn.nodemanager.local-dirs</name>
+    <value>/hadoop/yarn/local</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.container-executor.class</name>
+    <value>org.apache.hadoop.yarn.server.nodemanager.DefaultContainerExecutor</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.health-checker.interval-ms</name>
+    <value>135000</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.admin-env</name>
+    <value>MALLOC_ARENA_MAX=$MALLOC_ARENA_MAX</value>
+  </property>
+    <property>
+    <name>yarn.application.classpath</name>
+    <value>/etc/hadoop/conf,/usr/lib/hadoop/*,/usr/lib/hadoop/lib/*,/usr/lib/hadoop-hdfs/*,/usr/lib/hadoop-hdfs/lib/*,/usr/lib/hadoop-yarn/*,/usr/lib/hadoop-yarn/lib/*,/usr/lib/hadoop-mapreduce/*,/usr/lib/hadoop-mapreduce/lib/*</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.linux-container-executor.group</name>
+    <value>hadoop</value>
+  </property>
+    
 
+    <property>
+    <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
+    <property>
+    <name>yarn.resourcemanager.scheduler.class</name>
+    <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler</value>
+  </property>
+    <property>
+    <name>yarn.resourcemanager.am.max-attempts</name>
+    <value>2</value>
+  </property>
+  
+    <property>
+    <name>yarn.nodemanager.delete.debug-delay-sec</name>
+    <value>0</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+  </property>
+    <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>sandbox.hortonworks.com</value>
+  </property>
+    <property>
+    <name>yarn.acl.enable</name>
+    <value>true</value>
+  </property>
+  
+    <property>
+    <name>yarn.nodemanager.remote-app-log-dir-suffix</name>
+    <value>logs</value>
+  </property>
+    <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>64</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.log-dirs</name>
+    <value>/hadoop/yarn/log</value>
+  </property>
+    <property>
+    <name>yarn.log-aggregation.retain-seconds</name>
+    <value>2592000</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.log.retain-second</name>
+    <value>604800</value>
+  </property>
+   
+    <property>
+    <name>yarn.nodemanager.disk-health-checker.min-healthy-disks</name>
+    <value>0.25</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.health-checker.script.timeout-ms</name>
+    <value>60000</value>
+  </property>
+    <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>2048</value>
+  </property>
+    
+    <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>2250</value>
+  </property>
+    <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.container-monitor.interval-ms</name>
+    <value>3000</value>
+  </property>
+    
+    <property>
+    <name>yarn.nodemanager.log-aggregation.compression-type</name>
+    <value>gz</value>
+  </property>
+    <property>
+    <name>yarn.nodemanager.vmem-pmem-ratio</name>
+    <value>10</value>
+  </property>
+    <property>
+    <name>yarn.admin.acl</name>
+    <value>*</value>
+  </property>
 
  <property>
     <name>yarn.resourcemanager.admin.acl</name>
@@ -234,12 +588,6 @@ yarn = """<?xml version="1.0"?>
  <property>
     <name>yarn.resourcemanager.am.max-retries</name>
     <value>4</value>
-  </property>
-
-
- <property>
-    <name>yarn.nodemanager.principal</name>
-    <value>nm/localhost@localhost.eglbp.corp.yahoo.com</value>
   </property>
 
   <property>
@@ -455,36 +803,168 @@ yarn = """<?xml version="1.0"?>
 mapred = """<?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
+
+  <property>
+    <name>yarn.app.mapreduce.am.resource.mb</name>
+    <value>250</value>
+  </property>
+    <property>
+    <name>mapreduce.cluster.administrators</name>
+    <value>hadoop</value>
+  </property>
+    <property>
+    <name>mapreduce.map.java.opts</name>
+     <value>-Xmx512m -Djava.net.preferIPv4Stack=true -XX:+UseNUMA -XX:NewRatio=12 -XX:MaxHeapFreeRatio=40 -XX:MinHeapFreeRatio=15 </value>
+  </property>
+  <property>
+    <name>mapred.child.java.opts</name>
+    <value>-server -Xmx1200m -XX:+UseParallelGC -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true</value>
+    </property>
+  <property>
+    <name>mapreduce.reduce.shuffle.parallelcopies</name>
+    <value>30</value>
+  </property>
+    <property>
+    <name>mapreduce.task.io.sort.factor</name>
+    <value>100</value>
+  </property>
+    <property>
+    <name>yarn.app.mapreduce.am.admin-command-opts</name>
+    <value>-Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN</value>
+  </property>
+    <property>
+    <name>mapreduce.admin.reduce.child.java.opts</name>
+    <value>-Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN</value>
+  </property>
+    <property>
+    <name>mapreduce.application.classpath</name>
+    <value>$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/*,$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/lib/*</value>
+  </property>
+    <property>
+    <name>yarn.app.mapreduce.am.log.level</name>
+    <value>INFO</value>
+  </property>
+    <property>
+    <name>mapreduce.jobhistory.webapp.address</name>
+    <value>sandbox.hortonworks.com:19888</value>
+  </property>
+    <property>
+    <name>mapreduce.reduce.input.buffer.percent</name>
+    <value>0.0</value>
+  </property>
+    <property>
+    <name>mapreduce.reduce.java.opts</name>
+    <value>-Xmx512m -Djava.net.preferIPv4Stack=true -XX:+UseNUMA -XX:NewRatio=12 -XX:MaxHeapFreeRatio=40 -XX:MinHeapFreeRatio=15 </value>
+  </property>
+    <property>
+    <name>mapreduce.admin.map.child.java.opts</name>
+    <value>-Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN</value>
+  </property>
+    <property>
+    <name>yarn.app.mapreduce.am.command-opts</name>
+    <value>-Xmx312m</value>
+  </property>
+    <property>
+    <name>mapreduce.reduce.memory.mb</name>
+    <value>512</value>
+  </property>
+    <property>
+    <name>mapreduce.task.io.sort.mb</name>
+    <value>200</value>
+  </property>
+    <property>
+    <name>mapreduce.output.fileoutputformat.compress.type</name>
+    <value>BLOCK</value>
+  </property>
+    <property>
+    <name>mapreduce.jobhistory.address</name>
+    <value>sandbox.hortonworks.com:10020</value>
+  </property>
+    <property>
+    <name>mapreduce.reduce.log.level</name>
+    <value>INFO</value>
+  </property>
+    <property>
+    <name>mapreduce.jobhistory.done-dir</name>
+    <value>/mr-history/done</value>
+  </property>
+    <property>
+    <name>mapreduce.admin.user.env</name>
+    <value>LD_LIBRARY_PATH=/usr/lib/hadoop/lib/native:/usr/lib/hadoop/lib/native/`$JAVA_HOME/bin/java -d32 -version &amp;&gt; /dev/null;if [ $? -eq 0 ]; then echo Linux-i386-32; else echo Linux-amd64-64;fi`</value>
+  </property>
+    <property>
+    <name>mapreduce.map.memory.mb</name>
+    <value>512</value>
+  </property>
+    <property>
+    <name>mapreduce.reduce.speculative</name>
+    <value>false</value>
+  </property>
+    <property>
+    <name>mapreduce.output.fileoutputformat.compress</name>
+    <value>false</value>
+  </property>
+    <property>
+    <name>mapreduce.reduce.shuffle.input.buffer.percent</name>
+    <value>0.7</value>
+  </property>
+    <property>
+    <name>mapreduce.am.max-attempts</name>
+    <value>2</value>
+  </property>
+    <property>
+    <name>mapreduce.map.output.compress</name>
+    <value>false</value>
+  </property>
+    <property>
+    <name>mapreduce.reduce.shuffle.merge.percent</name>
+    <value>0.66</value>
+  </property>
+    <property>
+    <name>mapreduce.map.log.level</name>
+    <value>INFO</value>
+  </property>
+    <property>
+    <name>yarn.app.mapreduce.am.staging-dir</name>
+    <value>/user</value>
+  </property>
+    <property>
+    <name>mapreduce.jobhistory.intermediate-done-dir</name>
+    <value>/mr-history/tmp</value>
+  </property>
+    <property>
+    <name>mapreduce.map.speculative</name>
+    <value>false</value>
+  </property>
+    <property>
+    <name>mapreduce.shuffle.port</name>
+    <value>13562</value>
+  </property>
+    <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn-tez</value>
+  </property>
+    <property>
+    <name>mapreduce.job.reduce.slowstart.completedmaps</name>
+    <value>0.05</value>
+  </property>
+    <property>
+    <name>mapreduce.map.sort.spill.percent</name>
+    <value>0.7</value>
+  </property>
+    <property>
+    <name>mapreduce.task.timeout</name>
+    <value>300000</value>
+  </property>
+
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
-
-  <property>
-    <name>mapreduce.shuffle.port</name>
-    <value>8081</value>
-  </property>
-
 
 <property>
   <name>mapreduce.jobhistory.address</name>
   <value>%(jhs)s:10020</value>
 </property>
-
-<property>
-    <name>yarn.app.mapreduce.am.staging-dir</name>
-    <value>/tmp/${user.name}/.staging</value>
-   </property>
-
-   <property>
-    <name>mapreduce.jobhistory.intermediate-done-dir</name>
-    <value>/job-history-root/history/done_intermediate</value>
-   </property>
-
-   <property>
-    <name>mapreduce.jobhistory.done-dir</name>
-    <value>/job-history-root/history/done</value>
-   </property>
-
 
 <property>
   <name>mapred.job.tracker.history.completed.location</name>
@@ -495,42 +975,6 @@ mapred = """<?xml version="1.0"?>
   </description>
 </property>
 
-  <property>
-    <name>mapreduce.framework.name</name>
-    <value>yarn</value>
-  </property>
-
-
-<property>
-  <name>mapred.job.tracker</name>
-  <value>localhost:55555</value>
-  <description>The host and port that the MapReduce job tracker runs
-  at.  If "local", then jobs are run in-process as a single map
-  and reduce task.
-  </description>
-</property>
-
-
-  <property>
-    <name>mapreduce.jobtracker.kerberos.principal</name>
-    <value>mapred/localhost@localhost.eglbp.corp.yahoo.com</value>
-  </property>
-
-  <property>
-    <name>mapreduce.tasktracker.kerberos.principal</name>
-    <value>mapred/localhost@localhost.eglbp.corp.yahoo.com</value>
-  </property>
-
-  <property>
-    <name>mapreduce.jobtracker.keytab.file</name>
-    <value>/etc/krb5.keytab</value>
-  </property>
-
-  <property>
-    <name>mapreduce.tasktracker.keytab.file</name>
-    <value>/etc/krb5.keytab</value>
-  </property>
-
 <property>
 <name>mapreduce.history.server.http.address</name>
 <value>%(jhs)s:63678</value>
@@ -539,7 +983,7 @@ mapred = """<?xml version="1.0"?>
 <property>
 <name>mapreduce.history.server.embedded</name>
 <value>false</value>
-<value>localhost:65678</value>
+<value>%(jhs)s:65678</value>
 </property>
 
 <property>
@@ -564,12 +1008,6 @@ mapred = """<?xml version="1.0"?>
   <description>The class responsible for scheduling the tasks.</description>
 </property>
 
-<property>
-  <name>mapred.task.tracker.task-controller</name>
-  <value>org.apache.hadoop.mapred.LinuxTaskController</value>
-  <description>TaskController which is used to launch and manage task execution 
-  </description>
-</property>
 
 <property>
   <name>mapred.jobtracker.completeuserjobs.maximum</name>
