@@ -2,8 +2,14 @@ HADOOP_VERSION=branch-2.3
 PROTOC_VERSION=2.5.0
 JDK_BASE_DIR=/usr/lib/jvm/jdk7
 JDK_VERSION=jdk1.7.0_51
+SSH_PORT=2222
 
+YUM=$(shell which yum)
+APT=$(shell which apt-get)
+DFS=$(shell ls /grid/*/tmp/dfs/name/current/ 2>/dev/null | head -n 1)
 ARCH=$(shell uname -p)
+PDSH=pdsh -R ssh -p$(SSH_PORT)
+
 ifeq ($(ARCH), x86_64)
 	JDK_URL=http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-x64.tar.gz
 	JDK_BIN=$(shell basename $(JDK_URL))
@@ -11,10 +17,6 @@ else
 	JDK_URL=http://download.oracle.com/otn-pub/java/jdk/7u51-b13/jdk-7u51-linux-i586.tar.gz
 	JDK_BIN=$(shell basename $(JDK_URL))
 endif
-YUM=$(shell which yum)
-APT=$(shell which apt-get)
-PDSH=pdsh -R ssh
-DFS=$(shell ls /grid/*/tmp/dfs/name/current/ 2>/dev/null | head -n 1)
 
 $(JDK_BIN):
 	#wget --no-check-certificate -O $(JDK_BIN) -c --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" $(JDK_URL) 
@@ -22,7 +24,7 @@ $(JDK_BIN):
 jdk: $(JDK_BIN)
 	mkdir -p /usr/lib/jvm/
 	test -d $(JDK_BASE_DIR) || (tar -zxf $(JDK_BIN) && mv $(JDK_VERSION) $(JDK_BASE_DIR))
-	echo "export JAVA_HOME=/usr/lib/jvm/jdk7/"> /etc/profile.d/java.sh
+	echo "export JAVA_HOME=$(JDK_BASE_DIR)"> /etc/profile.d/java.sh
 	mkdir -p /usr/lib/jvm-exports/jdk7
 
 epel:
@@ -74,7 +76,7 @@ hadoop/hadoop-dist/target/:
 	make hadoop
 
 install: hadoop/hadoop-dist/target/
-	rsync -avP hadoop/hadoop-dist/target/hadoop-2*/ /opt/hadoop/
+	rsync -avP 'ssh -p $(SSH_PORT)' hadoop/hadoop-dist/target/hadoop-2*/ /opt/hadoop/
 	cp slaves gen-conf.py /opt/hadoop/etc/hadoop/
 	cd /opt/hadoop/etc/hadoop/; python gen-conf.py
 
@@ -88,10 +90,10 @@ propogate: /opt/hadoop slaves /root/.ssh/id_rsa
 	cp slaves /opt/hadoop/etc/hadoop/;
 	ssh-copy-id localhost;
 	for host in $$(cat slaves | grep -v localhost) ; do \
-		rsync -avP ~/.ssh/ ~/.ssh/; \
-		rsync --exclude=\*.out --exclude=\*.log -avP /opt/ $$host:/opt/; \
-		rsync -avP $(JDK_BASE_DIR) $$host:$(JDK_BASE_DIR); \
-		scp /etc/profile.d/java.sh $$host:/etc/profile.d/java.sh; \
+		rsync -avP 'ssh -p $(SSH_PORT)' ~/.ssh/ ~/.ssh/; \
+		rsync 'ssh -p $(SSH_PORT)' --exclude=\*.out --exclude=\*.log -avP /opt/ $$host:/opt/; \
+		rsync -avP 'ssh -p $(SSH_PORT)' $(JDK_BASE_DIR) $$host:$(JDK_BASE_DIR); \
+		scp -P $(SSH_PORT) /etc/profile.d/java.sh $$host:/etc/profile.d/java.sh; \
 	done
 
 start: propogate
