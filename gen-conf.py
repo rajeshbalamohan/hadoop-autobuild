@@ -711,7 +711,7 @@ yarn = """<?xml version="1.0"?>
   </property>
     <property>
     <name>yarn.nodemanager.log-aggregation.compression-type</name>
-    <value>gz</value>
+    <value>none</value>
   </property>
     <property>
     <name>yarn.nodemanager.vmem-pmem-ratio</name>
