@@ -101,9 +101,9 @@ start: propogate
 	/opt/hadoop/sbin/hadoop-daemon.sh start namenode
 	/opt/hadoop/sbin/yarn-daemon.sh start resourcemanager
 	/opt/hadoop/sbin/mr-jobhistory-daemon.sh start historyserver
-	echo "NameNode URL : http://`hostname`:50070"
-	echo "ResourceManager URL : http://`hostname`:8042"
-	echo "JobHistoryServer URL : http://`hostname`:19888"
+	echo "NameNode URL : http://localhost:50070"
+	echo "ResourceManager URL : http://localhost:8042"
+	echo "JobHistoryServer URL : http://localhost:19888"
 	PDSH_SSH_ARGS_APPEND="-p$(SSH_PORT)" $(PDSH) -w $$(tr \\n , < slaves) 'source /etc/profile; /opt/hadoop/sbin/hadoop-daemon.sh start datanode && /opt/hadoop/sbin/yarn-daemon.sh start nodemanager'
 
 stop:

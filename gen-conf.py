@@ -599,7 +599,7 @@ yarn = """<?xml version="1.0"?>
   </property>
     <property>
     <name>yarn.application.classpath</name>
-    <value>/opt/hadoop/etc/hadoop/,/opt/hadoop/share/common/*,/opt/hadoop/share/common/lib/*,/opt/hadoop/share/hdfs/*,/opt/hadoop/share/hdfs/lib/*/opt/hadoop/share/mapreduce/*,/opt/hadoop/share/mapreduce/lib/*,/opt/hadoop/share/tools/*,/opt/hadoop/share/tools/lib/*,/opt/hadoop/share/yarn/*,/opt/hadoop/share/yarn/*,/opt/hadoop/share/httpfs/*</value>
+    <value>/opt/hadoop/etc/hadoop/,/opt/hadoop/share/hadoop/common/*,/opt/hadoop/share/hadoop/common/lib/*,/opt/hadoop/share/hadoop/hdfs/*,/opt/hadoop/share/hadoop/hdfs/lib/*/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*,/opt/hadoop/share/hadoop/tools/*,/opt/hadoop/share/hadoop/tools/lib/*,/opt/hadoop/share/hadoop/yarn/*,/opt/hadoop/share/hadoop/yarn/*,/opt/hadoop/share/hadoop/httpfs/*</value>
   </property>
     <property>
     <name>yarn.nodemanager.linux-container-executor.group</name>
