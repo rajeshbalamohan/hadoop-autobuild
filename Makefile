@@ -17,7 +17,7 @@ PDSH=pdsh -R ssh
 DFS=$(shell ls /grid/*/tmp/dfs/name/current/ 2>/dev/null | head -n 1)
 
 $(JDK_BIN):
-	wget --no-check-certificate -O $(JDK_BIN) -c --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" $(JDK_URL) 
+	#wget --no-check-certificate -O $(JDK_BIN) -c --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" $(JDK_URL) 
 
 jdk: $(JDK_BIN)
 	mkdir -p /usr/lib/jvm/
@@ -90,7 +90,7 @@ propogate: /opt/hadoop slaves /root/.ssh/id_rsa
 	for host in $$(cat slaves | grep -v localhost) ; do \
 		rsync -avP ~/.ssh/ ~/.ssh/; \
 		rsync --exclude=\*.out --exclude=\*.log -avP /opt/ $$host:/opt/; \
-		rsync -avP /usr/lib/jvm/jdk6/ $$host:$(JDK_BASE_DIR); \
+		rsync -avP $(JDK_BASE_DIR) $$host:$(JDK_BASE_DIR); \
 		scp /etc/profile.d/java.sh $$host:/etc/profile.d/java.sh; \
 	done
 
