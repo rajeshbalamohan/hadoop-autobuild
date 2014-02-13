@@ -355,10 +355,6 @@ hdfs = """
     <value>750</value>
   </property>
     <property>
-    <name>dfs.datanode.data.dir</name>
-    <value>/hadoop/hdfs/data</value>
-  </property>
-    <property>
     <name>dfs.namenode.name.dir</name>
     <value>/hadoop/hdfs/namenode</value>
   </property>
