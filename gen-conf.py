@@ -64,6 +64,11 @@ core = """
     <value>*</value>
   </property>
     <property>
+    <name>ipc.client.tcpnodelay</name>
+    <value>true</value>
+  </property>
+
+    <property>
     <name>ipc.client.connection.maxidletime</name>
     <value>30000</value>
   </property>
@@ -1022,7 +1027,7 @@ mapred = """<?xml version="1.0"?>
   </property>
   <property>
     <name>mapred.child.java.opts</name>
-    <value>-server -Xmx1200m -XX:+UseParallelGC -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true</value>
+    <value>-Xmx512m -Djava.net.preferIPv4Stack=true -XX:+UseNUMA -XX:NewRatio=12 -XX:MaxHeapFreeRatio=40 -XX:MinHeapFreeRatio=15 </value>
     </property>
   <property>
     <name>mapreduce.reduce.shuffle.parallelcopies</name>
