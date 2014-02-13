@@ -475,7 +475,7 @@ hdfs = """
   </property>
     <property>
     <name>dfs.domain.socket.path</name>
-    <value>/var/lib/hadoop-hdfs/dn_socket</value>
+    <value>/var/run/dn_socket</value>
   </property>
     <property>
     <name>dfs.namenode.avoid.read.stale.datanode</name>
