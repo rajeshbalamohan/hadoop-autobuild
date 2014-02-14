@@ -101,10 +101,13 @@ start: propogate
 	/opt/hadoop/sbin/hadoop-daemon.sh start namenode
 	/opt/hadoop/sbin/yarn-daemon.sh start resourcemanager
 	/opt/hadoop/sbin/mr-jobhistory-daemon.sh start historyserver
-	echo "NameNode URL : http://localhost:50070"
-	echo "ResourceManager URL : http://localhost:8042"
-	echo "JobHistoryServer URL : http://localhost:19888"
+	@echo "NameNode URL : http://localhost:50070"
+	@echo "ResourceManager URL : http://localhost:8042"
+	@echo "JobHistoryServer URL : http://localhost:19888"
 	PDSH_SSH_ARGS_APPEND="-p$(SSH_PORT)" $(PDSH) -w $$(tr \\n , < slaves) 'source /etc/profile; /opt/hadoop/sbin/hadoop-daemon.sh start datanode && /opt/hadoop/sbin/yarn-daemon.sh start nodemanager'
+	@echo "**** EDIT /opt/hadoop/etc/hadoop/mapred-site.xml and change yarn-tez to yarn"
+	@echo "**** Verify if any of the xml in config directory contains >< i.e empty values"
+	@echo "**** Once all these are verified, run '/opt/hadoop/bin/yarn jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.3.1-SNAPSHOT-tests.jar sleep -m 1 -r 1' "
 
 stop:
 	/opt/hadoop/sbin/hadoop-daemon.sh stop namenode
