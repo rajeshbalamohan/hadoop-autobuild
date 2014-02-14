@@ -118,6 +118,10 @@ core = """
   	<name>dfs.namenode.name.dir</name>
   	<value>%(hadoop_name)s</value>
   </property>
+  <property>
+    <name>dfs.namenode.edits.dir</name>
+    <value>%(hadoop_name)s/edits</value>
+  </property>
 
   <property>
     <name>hadoop.security.authentication</name>
@@ -359,11 +363,7 @@ hdfs = """
     <name>dfs.datanode.data.dir.perm</name>
     <value>750</value>
   </property>
-    <property>
-    <name>dfs.namenode.name.dir</name>
-    <value>/hadoop/hdfs/namenode</value>
-  </property>
-    <property>
+  <property>
     <name>dfs.namenode.https-address</name>
     <value>%(namenode)s:50470</value>
   </property>
@@ -386,10 +386,6 @@ hdfs = """
     <property>
     <name>dfs.datanode.max.transfer.threads</name>
     <value>1024</value>
-  </property>
-<property>
-    <name>dfs.namenode.name.dir</name>
-    <value>/hadoop/hdfs/namenode</value>
   </property>
     <property>
     <name>dfs.namenode.https-address</name>
@@ -502,19 +498,12 @@ hdfs = """
     <name>dfs.datanode.data.dir.perm</name>
     <value>750</value>
   </property>
-   
-  <property>
-    <name>dfs.namenode.name.dir</name>
-    <value>/hadoop/hdfs/namenode</value>
-  </property>
+ 
     <property>
     <name>dfs.namenode.https-address</name>
     <value>%(namenode)s:50470</value>
   </property>
-  <property>
-    <name>dfs.datanode.data.dir</name>
-    <value>%(hadoop_data)s</value>
-  </property>
+
 
 <property>
   <name>dfs.block.local-path-access.user</name>
@@ -554,10 +543,6 @@ hdfs = """
   </description>
 </property>
 
-<property>
-<name>dfs.datanode.data.dir</name>
-<value>%(hadoop_data)s</value>
-</property>
 
 <property>
   <name>dfs.datanode.address</name>
