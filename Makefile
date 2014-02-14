@@ -75,7 +75,7 @@ hadoop: git maven protobuf
 hadoop/hadoop-dist/target/:
 	make hadoop
 
-install: hadoop/hadoop-dist/target/
+install: hadoop
 	rsync -avP hadoop/hadoop-dist/target/hadoop-2*/ /opt/hadoop/
 	cp slaves gen-conf.py /opt/hadoop/etc/hadoop/
 	cd /opt/hadoop/etc/hadoop/; python gen-conf.py
