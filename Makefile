@@ -86,7 +86,7 @@ install: hadoop
 	ssh-keygen -f /root/.ssh/id_rsa -N ''
 	echo "StrictHostKeyChecking=no" >> ~/.ssh/config
 
-propogate: /opt/hadoop slaves /root/.ssh/id_rsa
+propogate: slaves /root/.ssh/id_rsa
 	cp slaves /opt/hadoop/etc/hadoop/;
 	ssh-copy-id "root@localhost -p $(SSH_PORT)";
 	for host in $$(cat slaves | grep -v localhost) ; do \
