@@ -69,7 +69,7 @@ hadoop: git maven protobuf
 	test -d hadoop || git clone -b $(HADOOP_VERSION) git://git.apache.org/hadoop-common.git hadoop
 	export PATH=/opt/hadoop-build/bin/:$$PATH; \
 	. /etc/profile; \
-	cd hadoop; mvn package -Pnative -Pdist -DskipTests;
+	cd hadoop/hadoop-maven-plugins; /opt/hadoop-build/bin/mvn install; cd ../; mvn package -Pnative -Pdist -DskipTests;
 
 
 hadoop/hadoop-dist/target/:
