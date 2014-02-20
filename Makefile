@@ -20,6 +20,10 @@ endif
 
 $(JDK_BIN):
 	wget --no-check-certificate -O $(JDK_BIN) -c --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com" $(JDK_URL) 
+	echo "export JAVA_HOME=/usr/lib/jvm/jdk7/"> /etc/profile.d/java.sh
+	ln -s /usr/lib/jvm/jdk7/ /usr/lib/jvm-exports/jdk7
+	
+	
 
 jdk: $(JDK_BIN)
 	mkdir -p /usr/lib/jvm/
